@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prediction-loc"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = [
   "Ashli Molina <51959436+molinash@users.noreply.github.com>",
@@ -32,4 +32,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-prediction_loc = "prediction_loc.getArchive:main"
+prediction-loc = "prediction_loc.getArchive:main"
