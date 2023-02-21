@@ -20,7 +20,7 @@ python = "^3.9.2"
 pytz = "*"
 boto3 = "*"
 gtfs-realtime-bindings = "*"
-protobuf = "*"
+protobuf = "3.19.0"
 protobuf3-to-dict = "*"
 requests = "*"
 
