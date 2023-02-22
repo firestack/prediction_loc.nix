@@ -9,9 +9,6 @@ from datetime import datetime
 from google.transit import gtfs_realtime_pb2
 from protobuf_to_dict import protobuf_to_dict
 
-OBJECT_PREFIX_FORMAT = (
-    "concentrate/{0}/{1:02d}/{2:02d}/{0:02d}-{1:02d}-{2:02d}T{3:02d}:{4:02d}"
-)
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M"
 LOCAL_TIMEZONE = pytz.timezone("US/Eastern")
 TIMESTAMP_FORMAT = "%Y-%m-%d %-I:%M:%S %p"
@@ -33,6 +30,12 @@ FEED_TO_KEY_MAPPING = {
     "swiftly_bus_vehicle": [["goswift.ly", "mbta_bus", "vehicle_positions"]]
 }
 
+def bucket_object_prefix_format_string(args):
+  formatString = "{0}/{1:02d}/{2:02d}/{0:02d}-{1:02d}-{2:02d}T{3:02d}:{4:02d}"
+  if args["feed"].startswith("concentrate"):
+    return formatString
+  else:
+    return f"concentrate/{formatString}"
 
 def matches_filters(ent, args):
     trip = entity_trip(ent)
@@ -183,9 +186,6 @@ def main():
               os.mkdir("../output/")
           args["output"] = "../output/{0}-{1}.json".format(args["feed"], args["datetime"])
 
-if args["feed"].startswith("concentrate"):
-    OBJECT_PREFIX_FORMAT = OBJECT_PREFIX_FORMAT[12:]
-
   outputfile = os.path.expanduser(args["output"])
   with open(outputfile, "w") as file:
       bucketName = os.getenv("S3_BUCKET_NAME")
@@ -193,7 +193,7 @@ if args["feed"].startswith("concentrate"):
       s3 = boto3.resource("s3")
       feed = None
       bucket = s3.Bucket(bucketName)
-    prefix = OBJECT_PREFIX_FORMAT.format(
+      prefix = bucket_object_prefix_format_string(args).format(
           dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.minute
       )
       objectsWithPrefix = bucket.objects.filter(Prefix=prefix)
