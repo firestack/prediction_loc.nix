@@ -175,16 +175,17 @@ def main():
       args["stops"] = []
 
   if not args["output"]:
-      if os.path.exists("scripts/"):
-          # If the script is being called from the PredictionLoc root directory:
-          if not os.path.exists("output/"):
-              os.mkdir("output/")
-          args["output"] = "output/{0}-{1}.json".format(args["feed"], args["datetime"])
-      else:
-          # Assume the script is being called from the prediction-loc/scripts directory:
+      # Assume the script is being called from the prediction-loc/prediction_loc directory:
+      if os.path.exists("../.git"):
           if not os.path.exists("../output/"):
               os.mkdir("../output/")
+
           args["output"] = "../output/{0}-{1}.json".format(args["feed"], args["datetime"])
+      else:
+          # If the script is being called from the PredictionLoc root directory:
+          args["output"] = "output/{0}-{1}.json".format(args["feed"], args["datetime"])
+          if not os.path.exists("output/"):
+              os.mkdir("output/")
 
   outputfile = os.path.expanduser(args["output"])
   with open(outputfile, "w") as file:
