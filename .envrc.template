@@ -1,1 +1,5 @@
+# See README.md#Setup
+# export S3_BUCKET_NAME=""
+
+# Imports Dev Env
 use flake
