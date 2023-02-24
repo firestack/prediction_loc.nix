@@ -129,7 +129,7 @@ def main():
       "--datetime",
       dest="datetime",
       required=True,
-      help="Datetime of desired archive file, in format {YYYY}-{MM}-{DD}T{HH}:{mm}",
+      help="Datetime of desired archive file, in ISO 8601 & 3339 formats ({YYYY}-{MM}-{DD}T{HH}:{mm}-{utc_tz_offset}?)",
   )
   parser.add_argument(
       "-o", "--output", dest="output", help="Location for where to place the output file"
@@ -164,9 +164,7 @@ def main():
   )
   args = vars(parser.parse_args())
 
-  dateTime = LOCAL_TIMEZONE.localize(
-      datetime.strptime(args["datetime"], DATETIME_FORMAT)
-  ).astimezone(pytz.utc)
+  dateTime = datetime.fromisoformat(args["datetime"]).astimezone(pytz.utc)
 
   feed_type_choices = FEED_TO_KEY_MAPPING[args["feed"]]
   if args["stops"]:
