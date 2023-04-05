@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "prediction-loc"
+version = "0.2.0"
+description = ""
+authors = [
+  "Ashli Molina <51959436+molinash@users.noreply.github.com>",
+  "Chris Hayes <cwhayes711@gmail.com>",
+  "cleachmbta <82468359+cleachmbta@users.noreply.github.com>",
+  "Cora Grant <394835+x@users.noreply.github.com>",
+  "Frank LaNasa <flanasa@mbta.com>",
+  "Ian Westcott <iwestcott@mbta.com>",
+  "Kayla Firestack <kfirestack@mbta.com>",
+  "ldnash <nash.logan@gmail.com>",
+  "Paul Swartz <paul@paulswartz.net>",
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9.2"
+pytz = "*"
+boto3 = "*"
+gtfs-realtime-bindings = "*"
+protobuf = "3.19.0"
+protobuf3-to-dict = "*"
+requests = "*"
+
+
+[tool.poetry.dev-dependencies]
+black = "==19.3b0"
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+prediction-loc = "prediction_loc.getArchive:main"
