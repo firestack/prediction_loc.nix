@@ -171,7 +171,7 @@ def parse_args():
     )
     return vars(parser.parse_args())
 
-def main(args):
+def get_archive(args):
     dateTime = datetime.fromisoformat(args["datetime"]).astimezone(pytz.utc)
 
     feed_type_choices = FEED_TO_KEY_MAPPING[args["feed"]]
@@ -234,5 +234,8 @@ def main(args):
             print('No matching file found with prefix "{0}".'.format(prefix))
         print("Done.")
 
+def main():
+    get_archive(parse_args())
+
 if __name__ == "__main__":
-    main(parse_args())
+  main()
