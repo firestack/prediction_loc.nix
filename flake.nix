@@ -25,10 +25,12 @@
 				};
 
 				devShells = rec {
+					default = poetry;
+
 					poetry = pkgs.mkShell {
 						packages = [ poetry2nix.packages.${system}.poetry ];
 					};
-					default = pipenv;
+
 					pipenv = let ppkgs = pkgs.python3Packages; in pkgs.mkShell {
 						packages = [
 							ppkgs.python
@@ -36,8 +38,6 @@
 							pkgs.pipenv
 						];
 					};
-
-
 				};
 			});
 }
