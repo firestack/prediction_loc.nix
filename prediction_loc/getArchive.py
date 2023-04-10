@@ -212,34 +212,43 @@ def get_archives(opts):
 
     dateTime = datetime.fromisoformat(args["datetime"]).astimezone(pytz.utc)
 
-    feed_type_choices = FEED_TO_KEY_MAPPING[args["feed"]]
+
     if args["stops"]:
         args["stops"] = args["stops"].split(",")
     else:
         args["stops"] = []
 
-    if not args["output"]:
-        if os.path.exists("scripts/"):
-            # If the script is being called from the PredictionLoc root directory:
-            if not os.path.exists("output/"):
-                os.mkdir("output/")
-            args["output"] = "output/{0}-{1}.json".format(args["feed"], args["datetime"])
-        else:
-            # Assume the script is being called from the prediction-loc/scripts directory:
-            if not os.path.exists("../output/"):
-                os.mkdir("../output/")
-            args["output"] = "../output/{0}-{1}.json".format(args["feed"], args["datetime"])
 
-    outputfile = os.path.expanduser(args["output"])
+def file_name(args, dateTime):
+    output = args["output"]
+    if not output:
+        if os.path.exists("scripts/") or os.path.exists("prediction_loc/"):
+                # If the script is being called from the PredictionLoc root directory:
+                if not os.path.exists("output/"):
+                        os.mkdir("output/")
+                output = "output/{0}-{1}.json".format(args["feed"], dateTime.astimezone().isoformat(timespec="minutes"))
+        else:
+                # Assume the script is being called from the prediction-loc/scripts directory:
+                if not os.path.exists("../output/"):
+                    os.mkdir("../output/")
+                output = "../output/{0}-{1}.json".format(args["feed"], dateTime.astimezone().isoformat(timespec="minutes"))
+
+    outputfile = os.path.expanduser(output)
+    return outputfile
+
+def get_archive(args, dateTime, bucket, bucketName):
+    feed_type_choices = FEED_TO_KEY_MAPPING[args["feed"]]
+    prefix = bucket_object_prefix_format_string(args).format(
+        dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.minute
+    )
+
+    outputfile = file_name(args, dateTime)
+
+
+    feed = None
+
+    print(f"Writing to file `{outputfile}`")
     with open(outputfile, "w") as file:
-        bucketName = os.getenv("S3_BUCKET_NAME")
-        print('Using bucket "{0}"'.format(bucketName))
-        s3 = boto3.resource("s3")
-        feed = None
-        bucket = s3.Bucket(bucketName)
-        prefix = bucket_object_prefix_format_string(args).format(
-            dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.minute
-        )
         objectsWithPrefix = bucket.objects.filter(Prefix=prefix)
         for obj in objectsWithPrefix:
             if any(
