@@ -193,7 +193,7 @@ def parse_args():
         type=int,
         help='The amount of minutes of context to save'
     )
-    return vars(parser.parse_args())
+    return parser.parse_args()
 
 def make_time_range(start_time = None, before_minutes = 0, after_minutes = 0):
     from dateutil.relativedelta import relativedelta
@@ -207,8 +207,9 @@ def make_time_range(start_time = None, before_minutes = 0, after_minutes = 0):
 
     return rrule(MINUTELY, dtstart=start_ts, until=end_ts)
 
+def get_archives(opts):
+    args = vars(opts)
 
-def get_archive(args):
     dateTime = datetime.fromisoformat(args["datetime"]).astimezone(pytz.utc)
 
     feed_type_choices = FEED_TO_KEY_MAPPING[args["feed"]]
@@ -272,7 +273,7 @@ def get_archive(args):
         print("Done.")
 
 def main():
-    get_archive(parse_args())
+    get_archives(parse_args())
 
 if __name__ == "__main__":
     main()
