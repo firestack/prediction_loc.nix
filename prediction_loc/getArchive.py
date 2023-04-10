@@ -169,6 +169,30 @@ def parse_args():
         dest="object_prefix",
         help="Specify a custom prefix for the key of the object to load from S3",
     )
+    parser.add_argument(
+        "-B",
+        "--before",
+        dest="time_before",
+        default=0,
+        type=int,
+        help='The amount of minutes to look back to save'
+    )
+    parser.add_argument(
+        "-A",
+        "--after",
+        dest="time_after",
+        default=0,
+        type=int,
+        help='The amount of minutes to look ahead to save'
+    )
+    parser.add_argument(
+        "-C",
+        "--context",
+        dest="time_context",
+        default=0,
+        type=int,
+        help='The amount of minutes of context to save'
+    )
     return vars(parser.parse_args())
 
 def get_archive(args):
