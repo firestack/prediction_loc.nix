@@ -218,6 +218,15 @@ def get_archives(opts):
     else:
         args["stops"] = []
 
+    s3 = boto3.resource("s3")
+
+
+    bucketName = os.getenv("S3_BUCKET_NAME")
+    bucket = s3.Bucket(bucketName)
+    print('Using bucket "{0}"'.format(bucketName))
+
+    for time in make_time_range(dateTime, before_minutes = opts.time_before, after_minutes = opts.time_after):
+        get_archive(args, time, bucket, bucketName)
 
 def file_name(args, dateTime):
     output = args["output"]
