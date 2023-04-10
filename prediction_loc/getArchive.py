@@ -195,6 +195,19 @@ def parse_args():
     )
     return vars(parser.parse_args())
 
+def make_time_range(start_time = None, before_minutes = 0, after_minutes = 0):
+    from dateutil.relativedelta import relativedelta
+    from dateutil.rrule import rrule, MINUTELY
+
+
+    start_time = start_time or datetime.now()
+
+    end_ts = start_time + relativedelta(minutes=after_minutes)
+    start_ts = start_time - relativedelta(minutes=before_minutes)
+
+    return rrule(MINUTELY, dtstart=start_ts, until=end_ts)
+
+
 def get_archive(args):
     dateTime = datetime.fromisoformat(args["datetime"]).astimezone(pytz.utc)
 
