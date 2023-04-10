@@ -275,4 +275,4 @@ def main():
     get_archive(parse_args())
 
 if __name__ == "__main__":
-  main()
+    main()
