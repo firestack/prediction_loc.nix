@@ -4,7 +4,11 @@ import gzip
 import json
 import os
 import pytz
-import requests
+# import requests
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
 from datetime import datetime
 from google.transit import gtfs_realtime_pb2
 from protobuf_to_dict import protobuf_to_dict
@@ -39,6 +43,8 @@ def bucket_object_prefix_format_string(args):
         return f'{args["object_prefix"]}/{OBJECT_PREFIX_FORMAT}'
     elif not args["feed"].startswith("concentrate"):
         return f"concentrate/{OBJECT_PREFIX_FORMAT}"
+
+    return OBJECT_PREFIX_FORMAT
 
 def matches_filters(ent, args):
     trip = entity_trip(ent)
@@ -195,6 +201,10 @@ def parse_args():
     )
     return parser.parse_args()
 
+def time_range_from_opts(opts):
+    pass
+
+
 def make_time_range(start_time = None, before_minutes = 0, after_minutes = 0):
     from dateutil.relativedelta import relativedelta
     from dateutil.rrule import rrule, MINUTELY
@@ -218,6 +228,7 @@ def get_archives(opts):
     else:
         args["stops"] = []
 
+# def get_archive1(args, outputfile, s3)
     s3 = boto3.resource("s3")
 
 
@@ -235,7 +246,7 @@ def file_name(args, dateTime):
                 # If the script is being called from the PredictionLoc root directory:
                 if not os.path.exists("output/"):
                         os.mkdir("output/")
-                output = "output/{0}-{1}.json".format(args["feed"], dateTime.astimezone().isoformat(timespec="minutes"))
+                output = "output/{0}-{1}{2}.json".format(args["feed"], dateTime.astimezone().isoformat(timespec="minutes"), ".raw" if args["raw"] else "" )
         else:
                 # Assume the script is being called from the prediction-loc/scripts directory:
                 if not os.path.exists("../output/"):
